@@ -1,0 +1,49 @@
+---
+title: "TASK 1"
+output: html_notebook
+---
+
+# Decathlon Data Analysis
+
+
+## import libraries
+```{r}
+library(tidyverse)
+```
+
+
+## load cleaned data
+```{r}
+decathalon_data <- read_csv("data/clean_data/decathlon_clean.csv")
+```
+
+
+### Who had the longest long jump seen in the data?
+```{r}
+
+```
+
+
+### What was the average 100m time in each competition?
+```{r}
+
+```
+
+    
+### Who had the highest total points across both competitions?
+```{r}
+
+```
+
+
+### What was the shot-put scores for the top three competitors in each competition?
+```{r}
+
+```
+
+
+### What was the average points for competitors who ran the 400m in less than 50 seconds vs. those than ran 400m in more than 50 seconds?
+```{r}
+
+```
+
