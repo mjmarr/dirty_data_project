@@ -15,6 +15,9 @@
 *.xlsx
 *.xml
 
+#no rds files
+*.rds
+
 ### macOS ###
 # General
 .DS_Store
