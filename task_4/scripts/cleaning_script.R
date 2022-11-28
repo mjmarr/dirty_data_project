@@ -67,10 +67,20 @@ order_candy_data <- function(df){
 }
 
 #clean age column
-clean_age <- function(df){
+clean_age <- function(df) {
   df$age <- as.numeric(df$age)
   
-  df %>% mutate(age = if_else(age >= 2 & age <= 100, age, NA_integer_))
+  df %>% mutate(age = if_else(age >= 2 &
+                                age <= 100, age, as.numeric(NA)))
+}
+
+clean_gender <- function(df) {
+  df %>%
+    mutate(gender = case_when(
+      . == "I'd rather not say" ~ "not_specified",
+      . == NA ~ "not_specified",
+      TRUE == .
+    ))
 }
 
 
@@ -98,6 +108,79 @@ not_candy <- c(
 )
 
 
+#cleaning specific year 
+clean_2015 <- function(df){
+  df %>% 
+    #select relevant data
+    select(2:96,115) %>%
+    #remove non candies
+    select(!contains(not_candy)) %>% 
+    #add id column
+    add_id_column(2015) %>% 
+    #rename columns
+    rename_cols() %>% 
+    #add missing columns
+    mutate(
+      year = 2015,
+      gender = NA,
+      country = NA,
+      state_province = NA, .before = 4) %>% 
+    
+    #pivot values to candy -> rating
+    pivot_longer(
+      # 8 - butterfinger : 101 necco_wafers
+      cols = "butterfinger":"necco_wafers",
+      names_to = "candy",
+      values_to = "rating"
+    )
+}
+
+clean_2016 <- function(df){
+  
+  df %>%
+    #grab from tot:york_peppermint_patties
+    select(2:106) %>% 
+    #remove non candies
+    select(!contains(not_candy)) %>% 
+    #add id column
+    add_id_column(2016) %>% 
+    #rename columns
+    rename_cols() %>%
+    #add year column
+    mutate(year = 2016) %>% 
+    
+    pivot_longer(
+      # 8 - 100_grand_bar : 91 york_peppermint_patties
+      cols = "100_grand_bar":"york_peppermint_patties",
+      names_to = "candy",
+      values_to = "rating"
+    )
+}
+
+
+#2017
+clean_2017 <- function(df){
+  df %>% 
+    #select relevant data all columns to q7
+    select(1:109) %>% 
+    add_id_column(2017) %>% 
+    #remove q6 prefix from candy...
+    rename_all(~ stringr::str_replace(., regex("^q6_", ignore_case = TRUE), "")) %>%
+    #remove non candies
+    select(!contains(not_candy)) %>% 
+    rename_cols() %>% 
+    mutate(year = 2017) %>% 
+    
+    #pivot
+    pivot_longer(
+      # 8 - x100_grand_bar : 91 york_peppermint_patties
+      cols = "100_grand_bar":"york_peppermint_patties",
+      names_to = "candy",
+      values_to = "rating"
+    )
+}
+
+
 #Load excel files
 #import excel data
 raw_data_2015 <- readxl::read_excel("data/raw_data/boing-boing-candy-2015.xlsx") %>% 
@@ -108,81 +191,11 @@ raw_data_2017 <- readxl::read_excel("data/raw_data/boing-boing-candy-2017.xlsx")
   janitor::clean_names()
 
 
-#CANDY 2015
-#add missing common columns to 2015
-candy_2015 <- raw_data_2015 %>% 
-  #select relevant data
-  select(2:96,115) %>%
-  #remove non candies
-  select(!contains(not_candy)) %>% 
-  #add id column
-  add_id_column(2015) %>% 
-  #rename columns
-  rename_cols() %>% 
-  #add missing columns
-  mutate(
-    year = 2015,
-    gender = NA,
-    country = NA,
-    state_province = NA, .before = 4)
-  
+#clean 2015 / 2016 / 2017 raw
+candy_2015 <- clean_2015(raw_data_2015)
+candy_2016 <- clean_2016(raw_data_2016)
+candy_2017 <- clean_2017(raw_data_2017)
 
-candy_2015 <- candy_2015 %>% 
-  pivot_longer(
-    # 8 - butterfinger : 101 necco_wafers
-    cols = "butterfinger":"necco_wafers",
-    names_to = "candy",
-    values_to = "rating"
-  )
-
-#CANDY 2016
-names(raw_data_2016)
-
-candy_2016 <- raw_data_2016 %>%
-  #grab from tot:york_peppermint_patties
-  select(2:106) %>% 
-  #remove non candies
-  select(!contains(not_candy)) %>% 
-  #add id column
-  add_id_column(2016) %>% 
-  #rename columns
-  rename_cols() %>%
-  #add year column
-  mutate(year = 2016)
-
-names(candy_2016)
-
-candy_2016 <- candy_2016 %>% 
-  pivot_longer(
-    # 8 - 100_grand_bar : 91 york_peppermint_patties
-    cols = "100_grand_bar":"york_peppermint_patties",
-    names_to = "candy",
-    values_to = "rating"
-  )
-
-
-names(raw_data_2017)
-#CANDY 2017
-candy_2017 <- raw_data_2017 %>% 
-  #select relevant data all columns to q7
-  select(1:109) %>% 
-  add_id_column(2017) %>% 
-  #remove q6 prefix from candy...
-  rename_all(~ stringr::str_replace(., regex("^q6_", ignore_case = TRUE), "")) %>%
-  #remove non candies
-  select(!contains(not_candy)) %>% 
-  rename_cols() %>% 
-  mutate(year = 2017)
-
-names(candy_2017)
-
-candy_2017 <- candy_2017 %>% 
-  pivot_longer(
-    # 8 - x100_grand_bar : 91 york_peppermint_patties
-    cols = "100_grand_bar":"york_peppermint_patties",
-    names_to = "candy",
-    values_to = "rating"
-  )
 
 # Merge all 3 data-sets together
 merged_data_2015_to_2017 <- bind_rows(candy_2015, candy_2016, candy_2017)
@@ -191,8 +204,21 @@ merged_data_2015_to_2017 <- bind_rows(candy_2015, candy_2016, candy_2017)
 map(merged_data_2015_to_2017, class)
 
 #fix age entries
-merged_data_2015_to_2017 <- clean_age(merged_data_2015_to_2017)
+all_clean <- merged_data_2015_to_2017 %>% 
+  clean_age() %>% 
+  clean_gender() %>% 
+  clean_country()
 
 
+countries_2016 <- unique(candy_2016$country) %>% str_to_lower()
+countries_2017 <- unique(candy_2017$country) %>% str_to_lower()
 
+setdiff(countries_2016, countries_2017)
+
+merged_countried <- union(countries_2016,countries_2017)
+
+merged_countried
+
+us_pattern <- c()
+uk_pattern <- c("United Kindom", "england", "UK", "Scotland", "endland")
 
