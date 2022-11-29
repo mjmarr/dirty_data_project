@@ -5,6 +5,105 @@ library(assertr)
 library(readxl)
 
 
+#patterns / candly list
+#patterns
+us_strings <-
+  c(
+    "usa",
+    "us",
+    "united states of america",
+    "united states",
+    "ussa",
+    "u.s.a.",
+    "murica",
+    "usa!",
+    "usa (i think but it's an election year so who can really tell)",
+    "u.s." ,
+    "america" ,
+    "units states" ,
+    "usa usa usa" ,
+    "the best one - usa",
+    "usa! usa! usa!",
+    "the yoo ess of aaayyyyyy",
+    "usa!!!!!!" ,
+    "usa! usa!",
+    "united sates",
+    "sub-canadian north america... 'merica",
+    "trumpistan",
+    "merica",
+    "united stetes",
+    "not the usa or canada",
+    "usa usa usa usa" ,
+    "united  states of america",
+    "united state",
+    "united staes",
+    "usausausa",
+    "unhinged states",
+    "us of a",
+    "unites states",
+    "the united states",
+    "north carolina",
+    "unied states",
+    "u s" ,
+    "the united states of america" ,
+    "unite states",
+    "usa? hard to tell anymore..",
+    "'merica" ,
+    "usas" ,
+    "pittsburgh"  ,
+    "new york"  ,
+    "california" ,
+    "i pretend to be from canada, but i am really from the united states.",
+    "united stated" ,
+    "ahem....amerca" ,
+    "new jersey",
+    "united ststes",
+    "united statss" ,
+    "murrika",
+    "usaa",
+    "alaska",
+    "n. america",
+    "u s a",
+    "united statea",
+    "usa usa usa!!!!",
+    "cascadia"
+  )
+
+uk_strings <-
+  c("united kindom","u.k.","uk","scotland","endland","england","united kingdom")
+
+canada_strings <- c(
+  "can[a]*"
+)
+
+us_pattern <- paste0("(?i)", us_strings, collapse = "|")
+uk_pattern <- paste0("(?i)", uk_strings, collapse = "|")
+canada_pattern <- paste0("(?i)", canada_strings, collapse = "|") 
+
+#not candy list
+not_candy <- c(
+  "bonkers_the_board_game",
+  "broken_glow_stick",
+  "cash_or_other_forms_of_legal_tender",
+  "chardonnay",
+  "creepy_religious_comics_chick_tracts",
+  "dental_paraphenalia", 
+  "generic_brand_acetaminophen",
+  "healthy_fruit",
+  "hugs_actual_physical_hugs",
+  "kale_smoothie",
+  "lapel_pins",
+  "pencils",
+  "person_of_interest_season_3_dvd_box_set_not_including_disc_4_with_hilarious_outtakes",
+  "real_housewives_of_orange_county_season_9_blue_ray",
+  "sandwich_sized_bags_filled_with_boo_berry_crunch",
+  "peterson_brand_sidewalk_chalk",
+  "vicodin",
+  "white_bread",
+  "whole_wheat_anything"
+)
+
+
 #functions
 #rename specific column names in 2015/2016/2017
 rename_cols <- function(df){
@@ -77,36 +176,25 @@ clean_age <- function(df) {
 clean_gender <- function(df) {
   df %>%
     mutate(gender = case_when(
-      . == "I'd rather not say" ~ "not_specified",
-      . == NA ~ "not_specified",
-      TRUE == .
+      gender == "I'd rather not say" ~ "Not_Specified",
+      is.na(gender) ~ "Not_Specified",
+      TRUE ~ gender
     ))
 }
 
-
-#not candy list
-not_candy <- c(
-  "bonkers_the_board_game",
-  "broken_glow_stick",
-  "cash_or_other_forms_of_legal_tender",
-  "chardonnay",
-  "creepy_religious_comics_chick_tracts",
-  "dental_paraphenalia", 
-  "generic_brand_acetaminophen",
-  "healthy_fruit",
-  "hugs_actual_physical_hugs",
-  "kale_smoothie",
-  "lapel_pins",
-  "pencils",
-  "person_of_interest_season_3_dvd_box_set_not_including_disc_4_with_hilarious_outtakes",
-  "real_housewives_of_orange_county_season_9_blue_ray",
-  "sandwich_sized_bags_filled_with_boo_berry_crunch",
-  "peterson_brand_sidewalk_chalk",
-  "vicodin",
-  "white_bread",
-  "whole_wheat_anything"
-)
-
+#clean country column
+clean_country <- function(df) {
+  df %>% mutate(
+    country = case_when(
+      is.na(country) ~ NA_character_,
+      str_detect(country, "[[:digit:]]") ~ NA_character_,
+      str_detect(country, us_pattern) ~ "USA",
+      str_detect(country, uk_pattern) ~ "UK",
+      str_detect(country, canada_pattern) ~ "CANADA",
+      TRUE ~ "OTHER"
+    )
+  )
+}
 
 #cleaning specific year 
 clean_2015 <- function(df){
@@ -200,25 +288,17 @@ candy_2017 <- clean_2017(raw_data_2017)
 # Merge all 3 data-sets together
 merged_data_2015_to_2017 <- bind_rows(candy_2015, candy_2016, candy_2017)
 
-#check all types
-map(merged_data_2015_to_2017, class)
 
-#fix age entries
-all_clean <- merged_data_2015_to_2017 %>% 
+
+#clean merged data (date/gender/country)
+candy_clean_data <- merged_data_2015_to_2017 %>% 
   clean_age() %>% 
   clean_gender() %>% 
   clean_country()
 
 
-countries_2016 <- unique(candy_2016$country) %>% str_to_lower()
-countries_2017 <- unique(candy_2017$country) %>% str_to_lower()
+#save data to csv ready for analysis
+write_csv(candy_clean_data, "data/clean_data/candy_data_clean.csv")
 
-setdiff(countries_2016, countries_2017)
-
-merged_countried <- union(countries_2016,countries_2017)
-
-merged_countried
-
-us_pattern <- c()
-uk_pattern <- c("United Kindom", "england", "UK", "Scotland", "endland")
-
+#remove values from environment ready for analysis
+rm(list=ls())
