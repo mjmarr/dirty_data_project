@@ -3,6 +3,7 @@ library(tidyverse)
 library(janitor)
 library(assertr)
 library(readxl)
+library(here)
 
 
 #patterns / candly list
@@ -270,11 +271,11 @@ clean_2017 <- function(df){
 
 #Load excel files
 #import excel data
-raw_data_2015 <- readxl::read_excel("data/raw_data/boing-boing-candy-2015.xlsx") %>% 
+raw_data_2015 <- readxl::read_excel(here("data/raw_data/boing-boing-candy-2015.xlsx")) %>% 
   janitor::clean_names()
-raw_data_2016 <- readxl::read_excel("data/raw_data/boing-boing-candy-2016.xlsx") %>% 
+raw_data_2016 <- readxl::read_excel(here("data/raw_data/boing-boing-candy-2016.xlsx")) %>% 
   janitor::clean_names()
-raw_data_2017 <- readxl::read_excel("data/raw_data/boing-boing-candy-2017.xlsx") %>% 
+raw_data_2017 <- readxl::read_excel(here("data/raw_data/boing-boing-candy-2017.xlsx")) %>% 
   janitor::clean_names()
 
 

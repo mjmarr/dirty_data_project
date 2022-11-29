@@ -1758,9 +1758,13 @@ display: none;
 <h2>import libraries</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSh0aWR5dmVyc2UpXG5gYGAifQ== -->
-<pre class="r"><code>library(tidyverse)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShoZXJlKVxuXG5gYGAifQ== -->
+<pre class="r"><code>library(here)
+</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaGVyZSgpIHN0YXJ0cyBhdCBDOi9Vc2Vycy9sYXB0b3AvRGVza3RvcC9kaXJ0eV9kYXRhX3Byb2plY3QvdGFza18xXG4ifQ== -->
+<pre><code>here() starts at C:/Users/laptop/Desktop/dirty_data_project/task_1</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -1768,8 +1772,8 @@ display: none;
 <h2>load cleaned data</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGVjYXRoYWxvbl9kYXRhIDwtIHJlYWRfY3N2KFwiZGF0YS9jbGVhbl9kYXRhL2RlY2F0aGxvbl9jbGVhbi5jc3ZcIilcbmBgYCJ9 -->
-<pre class="r"><code>decathalon_data &lt;- read_csv(&quot;data/clean_data/decathlon_clean.csv&quot;)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGVjYXRoYWxvbl9kYXRhIDwtIHJlYWRfY3N2KGhlcmUoXCJkYXRhL2NsZWFuX2RhdGEvZGVjYXRobG9uX2NsZWFuLmNzdlwiKSlcbmBgYCJ9 -->
+<pre class="r"><code>decathalon_data &lt;- read_csv(here(&quot;data/clean_data/decathlon_clean.csv&quot;))</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -1777,6 +1781,12 @@ display: none;
 <h3>Who had the longest long jump seen in the data?</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGVjYXRoYWxvbl9kYXRhICU+JSBcbiAgc2VsZWN0KCFwb2ludHMpICU+JSBcbiAgZmlsdGVyKGV2ZW50ID09ICdsb25nX2p1bXAnKSAlPiVcbiAgc2xpY2VfbWF4KGRpc3RhbmNlX29yX3RpbWUsIG4gPSAxKVxuYGBgIn0= -->
+<pre class="r"><code>decathalon_data %&gt;% 
+  select(!points) %&gt;% 
+  filter(event == &#39;long_jump&#39;) %&gt;%
+  slice_max(distance_or_time, n = 1)</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -1784,6 +1794,12 @@ display: none;
 <h3>What was the average 100m time in each competition?</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGVjYXRoYWxvbl9kYXRhICU+JVxuICBncm91cF9ieShjb21wZXRpdGlvbikgJT4lIFxuICBmaWx0ZXIoZXZlbnQgPT0gJ3gxMDBtJykgJT4lXG4gIHN1bW1hcmlzZShhdmVyYWdlXzEwMG0gPSBtZWFuKGRpc3RhbmNlX29yX3RpbWUpKVxuYGBgIn0= -->
+<pre class="r"><code>decathalon_data %&gt;%
+  group_by(competition) %&gt;% 
+  filter(event == &#39;x100m&#39;) %&gt;%
+  summarise(average_100m = mean(distance_or_time))</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -1791,6 +1807,15 @@ display: none;
 <h3>Who had the highest total points across both competitions?</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGVjYXRoYWxvbl9kYXRhICU+JSBcbiAgc2VsZWN0KCEoZXZlbnR8ZGlzdGFuY2Vfb3JfdGltZSkpICU+JSBcbiAgdW5pcXVlKCkgJT4lIFxuICBncm91cF9ieShuYW1lKSAlPiUgXG4gIHN1bW1hcmlzZSh0b3RhbF9wb2ludHMgPSBzdW0ocG9pbnRzKSkgJT4lIFxuICBhcnJhbmdlKGRlc2ModG90YWxfcG9pbnRzKSkgJT4lXG4gIHNsaWNlKDEpXG5gYGAifQ== -->
+<pre class="r"><code>decathalon_data %&gt;% 
+  select(!(event|distance_or_time)) %&gt;% 
+  unique() %&gt;% 
+  group_by(name) %&gt;% 
+  summarise(total_points = sum(points)) %&gt;% 
+  arrange(desc(total_points)) %&gt;%
+  slice(1)</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -1799,12 +1824,42 @@ display: none;
 competition?</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGVjYXRoYWxvbl9kYXRhICU+JVxuICBmaWx0ZXIoZXZlbnQgPT0gXCJzaG90X3B1dFwiKSAlPiUgXG4gIGdyb3VwX2J5KGNvbXBldGl0aW9uKSAlPiUgXG4gIGFycmFuZ2UoZGVzYyhkaXN0YW5jZV9vcl90aW1lKSkgJT4lIFxuICBzbGljZV9oZWFkKG4gPSAzKVxuXG5kZWNhdGhhbG9uX2RhdGEgJT4lXG4gIGZpbHRlcihldmVudCA9PSBcInNob3RfcHV0XCIpICU+JSBcbiAgZ3JvdXBfYnkoY29tcGV0aXRpb24pICU+JSBcbiAgc2xpY2VfbWF4KGRpc3RhbmNlX29yX3RpbWUsIG4gPSAzKVxuYGBgIn0= -->
+<pre class="r"><code>decathalon_data %&gt;%
+  filter(event == &quot;shot_put&quot;) %&gt;% 
+  group_by(competition) %&gt;% 
+  arrange(desc(distance_or_time)) %&gt;% 
+  slice_head(n = 3)
+
+decathalon_data %&gt;%
+  filter(event == &quot;shot_put&quot;) %&gt;% 
+  group_by(competition) %&gt;% 
+  slice_max(distance_or_time, n = 3)</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
 <div id="what-was-the-average-points-for-competitors-who-ran-the-400m-in-less-than-50-seconds-vs.-those-than-ran-400m-in-more-than-50-seconds" class="section level3">
 <h3>What was the average points for competitors who ran the 400m in less
 than 50 seconds vs. those than ran 400m in more than 50 seconds?</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZmFzdGVzdF9ydW5uZXJfNDAwbSA8LSBkZWNhdGhhbG9uX2RhdGEgJT4lIFxuICBmaWx0ZXIoZXZlbnQgPSBcIng0MDBtXCIgJiBkaXN0YW5jZV9vcl90aW1lIDwgNTApXG5cbmBgYCJ9 -->
+<pre class="r"><code>fastest_runner_400m &lt;- decathalon_data %&gt;% 
+  filter(event = &quot;x400m&quot; &amp; distance_or_time &lt; 50)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gYGZpbHRlcigpYDpcbiEgV2UgZGV0ZWN0ZWQgYSBuYW1lZCBpbnB1dC5cbuKEuSBUaGlzIHVzdWFsbHkgbWVhbnMgdGhhdCB5b3UndmUgdXNlZCBgPWAgaW5zdGVhZCBvZiBgPT1gLlxu4oS5IERpZCB5b3UgbWVhbiBgZXZlbnQgPT0gXCJ4NDAwbVwiICYgZGlzdGFuY2Vfb3JfdGltZSA8IDUwYD9cbkJhY2t0cmFjZTpcbiAxLiBkZWNhdGhhbG9uX2RhdGEgJT4lIC4uLlxuIDMuIGRwbHlyOjo6ZmlsdGVyLmRhdGEuZnJhbWUoLiwgZXZlbnQgPSBcIng0MDBtXCIgJiBkaXN0YW5jZV9vcl90aW1lIDwgNTApXG4ifQ== -->
+<pre><code>Error in `filter()`:
+! We detected a named input.
+ℹ This usually means that you&#39;ve used `=` instead of `==`.
+ℹ Did you mean `event == &quot;x400m&quot; &amp; distance_or_time &lt; 50`?
+Backtrace:
+ 1. decathalon_data %&gt;% ...
+ 3. dplyr:::filter.data.frame(., event = &quot;x400m&quot; &amp; distance_or_time &lt; 50)</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-chunk-end -->
@@ -1814,7 +1869,7 @@ than 50 seconds vs. those than ran 400m in more than 50 seconds?</h3>
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlRBU0sgMSINCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQoNCiMgRGVjYXRobG9uIERhdGEgQW5hbHlzaXMNCg0KDQojIyBpbXBvcnQgbGlicmFyaWVzDQpgYGB7cn0NCmxpYnJhcnkodGlkeXZlcnNlKQ0KYGBgDQoNCg0KIyMgbG9hZCBjbGVhbmVkIGRhdGENCmBgYHtyfQ0KZGVjYXRoYWxvbl9kYXRhIDwtIHJlYWRfY3N2KCJkYXRhL2NsZWFuX2RhdGEvZGVjYXRobG9uX2NsZWFuLmNzdiIpDQpgYGANCg0KDQojIyMgV2hvIGhhZCB0aGUgbG9uZ2VzdCBsb25nIGp1bXAgc2VlbiBpbiB0aGUgZGF0YT8NCmBgYHtyfQ0KDQpgYGANCg0KDQojIyMgV2hhdCB3YXMgdGhlIGF2ZXJhZ2UgMTAwbSB0aW1lIGluIGVhY2ggY29tcGV0aXRpb24/DQpgYGB7cn0NCg0KYGBgDQoNCiAgICANCiMjIyBXaG8gaGFkIHRoZSBoaWdoZXN0IHRvdGFsIHBvaW50cyBhY3Jvc3MgYm90aCBjb21wZXRpdGlvbnM/DQpgYGB7cn0NCg0KYGBgDQoNCg0KIyMjIFdoYXQgd2FzIHRoZSBzaG90LXB1dCBzY29yZXMgZm9yIHRoZSB0b3AgdGhyZWUgY29tcGV0aXRvcnMgaW4gZWFjaCBjb21wZXRpdGlvbj8NCmBgYHtyfQ0KDQpgYGANCg0KDQojIyMgV2hhdCB3YXMgdGhlIGF2ZXJhZ2UgcG9pbnRzIGZvciBjb21wZXRpdG9ycyB3aG8gcmFuIHRoZSA0MDBtIGluIGxlc3MgdGhhbiA1MCBzZWNvbmRzIHZzLsKgdGhvc2UgdGhhbiByYW4gNDAwbSBpbiBtb3JlIHRoYW4gNTAgc2Vjb25kcz8NCmBgYHtyfQ0KDQpgYGANCg0K</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlRBU0sgMSINCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQoNCiMgRGVjYXRobG9uIERhdGEgQW5hbHlzaXMNCg0KDQojIyBpbXBvcnQgbGlicmFyaWVzDQpgYGB7cn0NCmxpYnJhcnkodGlkeXZlcnNlKQ0KbGlicmFyeShoZXJlKQ0KYGBgDQoNCg0KIyMgbG9hZCBjbGVhbmVkIGRhdGENCmBgYHtyfQ0KZGVjYXRoYWxvbl9kYXRhIDwtIHJlYWRfY3N2KGhlcmUoImRhdGEvY2xlYW5fZGF0YS9kZWNhdGhsb25fY2xlYW4uY3N2IikpDQpgYGANCg0KDQojIyMgV2hvIGhhZCB0aGUgbG9uZ2VzdCBsb25nIGp1bXAgc2VlbiBpbiB0aGUgZGF0YT8NCmBgYHtyfQ0KZGVjYXRoYWxvbl9kYXRhICU+JSANCiAgc2VsZWN0KCFwb2ludHMpICU+JSANCiAgZmlsdGVyKGV2ZW50ID09ICdsb25nX2p1bXAnKSAlPiUNCiAgc2xpY2VfbWF4KGRpc3RhbmNlX29yX3RpbWUsIG4gPSAxKQ0KYGBgDQoNCg0KIyMjIFdoYXQgd2FzIHRoZSBhdmVyYWdlIDEwMG0gdGltZSBpbiBlYWNoIGNvbXBldGl0aW9uPw0KYGBge3J9DQpkZWNhdGhhbG9uX2RhdGEgJT4lDQogIGdyb3VwX2J5KGNvbXBldGl0aW9uKSAlPiUgDQogIGZpbHRlcihldmVudCA9PSAneDEwMG0nKSAlPiUNCiAgc3VtbWFyaXNlKGF2ZXJhZ2VfMTAwbSA9IG1lYW4oZGlzdGFuY2Vfb3JfdGltZSkpDQpgYGANCg0KICAgIA0KIyMjIFdobyBoYWQgdGhlIGhpZ2hlc3QgdG90YWwgcG9pbnRzIGFjcm9zcyBib3RoIGNvbXBldGl0aW9ucz8NCmBgYHtyfQ0KZGVjYXRoYWxvbl9kYXRhICU+JSANCiAgc2VsZWN0KCEoZXZlbnR8ZGlzdGFuY2Vfb3JfdGltZSkpICU+JSANCiAgdW5pcXVlKCkgJT4lIA0KICBncm91cF9ieShuYW1lKSAlPiUgDQogIHN1bW1hcmlzZSh0b3RhbF9wb2ludHMgPSBzdW0ocG9pbnRzKSkgJT4lIA0KICBhcnJhbmdlKGRlc2ModG90YWxfcG9pbnRzKSkgJT4lDQogIHNsaWNlKDEpDQpgYGANCg0KDQojIyMgV2hhdCB3YXMgdGhlIHNob3QtcHV0IHNjb3JlcyBmb3IgdGhlIHRvcCB0aHJlZSBjb21wZXRpdG9ycyBpbiBlYWNoIGNvbXBldGl0aW9uPw0KYGBge3J9DQpkZWNhdGhhbG9uX2RhdGEgJT4lDQogIGZpbHRlcihldmVudCA9PSAic2hvdF9wdXQiKSAlPiUgDQogIGdyb3VwX2J5KGNvbXBldGl0aW9uKSAlPiUgDQogIGFycmFuZ2UoZGVzYyhkaXN0YW5jZV9vcl90aW1lKSkgJT4lIA0KICBzbGljZV9oZWFkKG4gPSAzKQ0KDQpkZWNhdGhhbG9uX2RhdGEgJT4lDQogIGZpbHRlcihldmVudCA9PSAic2hvdF9wdXQiKSAlPiUgDQogIGdyb3VwX2J5KGNvbXBldGl0aW9uKSAlPiUgDQogIHNsaWNlX21heChkaXN0YW5jZV9vcl90aW1lLCBuID0gMykNCmBgYA0KDQoNCiMjIyBXaGF0IHdhcyB0aGUgYXZlcmFnZSBwb2ludHMgZm9yIGNvbXBldGl0b3JzIHdobyByYW4gdGhlIDQwMG0gaW4gbGVzcyB0aGFuIDUwIHNlY29uZHMgdnMuwqB0aG9zZSB0aGFuIHJhbiA0MDBtIGluIG1vcmUgdGhhbiA1MCBzZWNvbmRzPw0KYGBge3J9DQpmYXN0ZXN0X3J1bm5lcl80MDBtIDwtIGRlY2F0aGFsb25fZGF0YSAlPiUgDQogIGZpbHRlcihldmVudCA9PSAieDQwMG0iICYgZGlzdGFuY2Vfb3JfdGltZSA8IDUwKQ0KDQpzbG93ZXN0X3J1bm5lcl80MDBtIDwtIGRlY2F0aGFsb25fZGF0YSAlPiUgDQogIGZpbHRlcihldmVudCA9PSAieDQwMG0iICYgZGlzdGFuY2Vfb3JfdGltZSA+IDUwKQ0KYGBgDQoNCmBgYHtyfQ0KZmFzdGVzdF80MDBfYXZnIDwtIGZhc3Rlc3RfcnVubmVyXzQwMG0gJT4lIA0KICBzdW1tYXJpc2UoYXZnX3BvaW50cyA9IG1lYW4ocG9pbnRzKSkgJT4lIA0KICBwdWxsKCkNCg0Kc2xvd2VzdF80MDBfYXZnIDwtIHNsb3dlc3RfcnVubmVyXzQwMG0gJT4lIA0KICBzdW1tYXJpc2UoYXZnX3BvaW50cyA9IG1lYW4ocG9pbnRzKSkgJT4lIA0KICBwdWxsKCkNCmBgYA0KDQoNCg==</div>
 
 
 

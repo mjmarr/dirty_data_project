@@ -9,41 +9,78 @@ output: html_notebook
 ## import libraries
 ```{r}
 library(tidyverse)
+library(here)
 ```
 
 
 ## load cleaned data
 ```{r}
-decathalon_data <- read_csv("data/clean_data/decathlon_clean.csv")
+decathalon_data <- read_csv(here("data/clean_data/decathlon_clean.csv"))
 ```
 
 
 ### Who had the longest long jump seen in the data?
 ```{r}
-
+decathalon_data %>% 
+  select(!points) %>% 
+  filter(event == 'long_jump') %>%
+  slice_max(distance_or_time, n = 1)
 ```
 
 
 ### What was the average 100m time in each competition?
 ```{r}
-
+decathalon_data %>%
+  group_by(competition) %>% 
+  filter(event == 'x100m') %>%
+  summarise(average_100m = mean(distance_or_time))
 ```
 
     
 ### Who had the highest total points across both competitions?
 ```{r}
-
+decathalon_data %>% 
+  select(!(event|distance_or_time)) %>% 
+  unique() %>% 
+  group_by(name) %>% 
+  summarise(total_points = sum(points)) %>% 
+  arrange(desc(total_points)) %>%
+  slice(1)
 ```
 
 
 ### What was the shot-put scores for the top three competitors in each competition?
 ```{r}
+decathalon_data %>%
+  filter(event == "shot_put") %>% 
+  group_by(competition) %>% 
+  arrange(desc(distance_or_time)) %>% 
+  slice_head(n = 3)
 
+decathalon_data %>%
+  filter(event == "shot_put") %>% 
+  group_by(competition) %>% 
+  slice_max(distance_or_time, n = 3)
 ```
 
 
 ### What was the average points for competitors who ran the 400m in less than 50 seconds vs. those than ran 400m in more than 50 seconds?
 ```{r}
+fastest_runner_400m <- decathalon_data %>% 
+  filter(event == "x400m" & distance_or_time < 50)
 
+slowest_runner_400m <- decathalon_data %>% 
+  filter(event == "x400m" & distance_or_time > 50)
 ```
+
+```{r}
+fastest_400_avg <- fastest_runner_400m %>% 
+  summarise(avg_points = mean(points)) %>% 
+  pull()
+
+slowest_400_avg <- slowest_runner_400m %>% 
+  summarise(avg_points = mean(points)) %>% 
+  pull()
+```
+
 

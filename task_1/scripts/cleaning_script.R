@@ -3,6 +3,7 @@ library(tidyverse)
 library(janitor)
 library(assertr)
 library(testthat)
+library(here)
 
 
 #functions
@@ -53,7 +54,7 @@ validate_cleaned_data <- function(data){
 
 
 #load raw data
-raw_decathlon_data <- read_rds("data/raw_data/decathlon.rds")
+raw_decathlon_data <- read_rds(here("data/raw_data/decathlon.rds"))
 
 #clean raw data
 clean_decathlon_data <- clean_data(raw_decathlon_data)

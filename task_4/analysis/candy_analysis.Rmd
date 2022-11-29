@@ -8,11 +8,12 @@ output: html_notebook
 ## import libraries
 ```{r}
 library(tidyverse)
+library(here)
 ```
 
 ## import cleaned data
 ```{r}
-candy_data <- read_csv("data/clean_data/candy_data_clean.csv")
+candy_data <- read_csv(here("data/clean_data/candy_data_clean.csv"))
 ```
 
 ### What is the total number of candy ratings given across the three years. (Number of candy ratings, not the number of raters. Don’t count missing values)
