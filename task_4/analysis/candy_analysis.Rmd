@@ -1,0 +1,143 @@
+---
+title: "TASK 4"
+output: html_notebook
+---
+
+# Halloween Candy Data Analysis
+
+## import libraries
+```{r}
+library(tidyverse)
+```
+
+## import cleaned data
+```{r}
+candy_data <- read_csv("data/clean_data/candy_data_clean.csv")
+```
+
+### What is the total number of candy ratings given across the three years. (Number of candy ratings, not the number of raters. Don’t count missing values)
+```{r}
+num_rating <- candy_data %>% 
+  filter(!is.na(rating)) %>%
+  count() %>% 
+  pull()
+
+num_rating
+```
+
+### What was the average age of people who are going out trick or treating?
+```{r}
+avg_age_going_out <- candy_data %>% 
+  filter(going_trick_or_treating == "Yes" & !is.na(age)) %>% 
+  group_by(id) %>%
+  slice(1) %>% 
+  ungroup() %>% 
+  summarise(average_age = mean(age, na.rm = TRUE)) %>% 
+  pull()
+
+avg_age_going_out
+```
+
+### What was the average age of people who are not going trick or treating?
+```{r}
+avg_age_not_going_out <- candy_data %>% 
+  filter(going_trick_or_treating == "No" & !is.na(age)) %>% 
+  group_by(id) %>%
+  slice(1) %>% 
+  ungroup() %>% 
+  summarise(average_age = mean(age, na.rm = TRUE)) %>% 
+  pull()
+
+avg_age_not_going_out
+```
+
+### For each of joy, despair and meh, which candy bar received the most of these ratings?
+```{r}
+candy_data %>% 
+  group_by(rating, candy) %>% 
+  summarise(n_ratings = n()) %>% 
+  slice_max(n_ratings) %>% 
+  head(3)
+```
+
+```{r}
+#check top joY
+candy_data %>% 
+  filter(rating == "JOY") %>% 
+  group_by(rating, candy) %>% 
+  summarise(n_ratings = n()) %>% 
+  slice_max(n_ratings)
+```
+
+
+```{r}
+#check top despair
+candy_data %>% 
+  filter(rating == "DESPAIR") %>% 
+  group_by(rating, candy) %>% 
+  summarise(n_ratings = n()) %>% 
+  slice_max(n_ratings)
+```
+
+```{r}
+#check top MEH
+candy_data %>% 
+  filter(rating == "MEH") %>% 
+  group_by(rating, candy) %>% 
+  summarise(n_ratings = n()) %>% 
+  slice_max(n_ratings)
+```
+
+### How many people rated Starburst as despair?
+```{r}
+starburst_despair <- candy_data %>% 
+  filter(rating == "DESPAIR" & candy == "starburst") %>% 
+  count() %>% 
+  pull()
+```
+
+
+#For the next three questions, count despair as -1, joy as +1, and meh as 0.
+
+### What was the most popular candy bar by this rating system for each gender in the dataset ?
+```{r}
+candy_data %>% 
+  mutate(rating = case_when(
+    rating == "JOY" ~ 1,
+    rating == "DESPAIR" ~ -1,
+    TRUE ~ 0
+  )) %>% 
+  group_by(gender, candy) %>%
+  summarise(score = sum(rating)) %>% 
+  slice_max(score, n = 2)
+```
+
+
+### What was the most popular candy bar in each year?
+```{r}
+candy_data %>% 
+    mutate(rating = case_when(
+    rating == "JOY" ~ 1,
+    rating == "DESPAIR" ~ -1,
+    TRUE ~ 0
+  )) %>% 
+  group_by(year, candy) %>% 
+  summarise(score = sum(rating)) %>% 
+  slice_max(score, n = 2)
+```
+
+
+### What was the most popular candy bar by this rating for people in US, Canada, UK, and all other countries?
+```{r}
+candy_data %>% 
+    filter(!is.na(country)) %>% 
+    mutate(rating = case_when(
+    rating == "JOY" ~ 1,
+    rating == "DESPAIR" ~ -1,
+    TRUE ~ 0
+  )) %>% 
+  group_by(country, candy) %>% 
+  summarise(score = sum(rating)) %>% 
+  slice_max(score, n = 2, with_ties = FALSE)
+```
+

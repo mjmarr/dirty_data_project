@@ -268,7 +268,6 @@ clean_2017 <- function(df){
     )
 }
 
-
 #Load excel files
 #import excel data
 raw_data_2015 <- readxl::read_excel("data/raw_data/boing-boing-candy-2015.xlsx") %>% 
@@ -289,13 +288,11 @@ candy_2017 <- clean_2017(raw_data_2017)
 merged_data_2015_to_2017 <- bind_rows(candy_2015, candy_2016, candy_2017)
 
 
-
 #clean merged data (date/gender/country)
 candy_clean_data <- merged_data_2015_to_2017 %>% 
   clean_age() %>% 
   clean_gender() %>% 
   clean_country()
-
 
 #save data to csv ready for analysis
 write_csv(candy_clean_data, "data/clean_data/candy_data_clean.csv")
