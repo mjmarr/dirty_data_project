@@ -1,0 +1,79 @@
+---
+title: "TASK 2"
+output: html_notebook
+---
+
+# Cake ingredients Analysis
+
+## import libraries
+```{r}
+library(tidyverse)
+library(here)
+```
+
+## import cleaned data
+```{r}
+clean_cake_data <- read_csv(here("data/clean_data/cake_data_clean.csv"))
+```
+
+
+### Which cake has the most cocoa in it?
+```{r}
+clean_cake_data %>% 
+  filter(ingredient == "cocoa") %>% 
+  slice_max(quantity) %>% 
+  select(cake) %>% 
+  pull()
+```
+#### However In general, a 1-ounce piece of unsweetened chocolate can replace 3 Tbsp
+```{r}
+#However In general, a 1-ounce piece of unsweetened chocolate can replace 3 Tbsp
+cocoa_contents <- clean_cake_data %>% 
+  filter(ingredient %in% c("cocoa","chocolate")) %>% 
+  mutate(tbsp_eqiv = case_when(
+    ingredient == "chocolate" ~ quantity*3,
+    TRUE ~ quantity
+  ))
+  
+cocoa_contents %>% 
+  slice_max(tbsp_eqiv) %>% 
+  select(cake) %>% 
+  pull()
+```
+
+
+### For sponge cake, how many cups of ingredients are used in total?
+```{r}
+sponge_cups_req <- clean_cake_data %>% 
+  filter(cake == "Sponge" & measure == "cup") %>% 
+  summarise(sum(quantity)) %>% 
+  pull()
+```
+
+### How many ingredients are measured in teaspoons?
+```{r}
+ingredients_teaspoons <- clean_cake_data %>% 
+  filter(measure == "teaspoon") %>% 
+  distinct(ingredient) %>% 
+  count() %>% 
+  pull()
+```
+
+### Which cake has the most unique ingredients?
+```{r}
+clean_cake_data %>% 
+  group_by(cake) %>% 
+  tally() %>% 
+  arrange(desc(n)) %>% 
+  slice_max(n)
+```
+
+### Which ingredients are used only once?
+```{r}
+clean_cake_data %>% 
+  count(ingredient) %>% 
+  slice_min(n) %>% 
+  select(ingredient) %>% 
+  pull()
+```
+
