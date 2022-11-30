@@ -16,7 +16,7 @@ Pull the repository and open each task in RStudio, load the analysis file locate
 ### Technologies used
 - R
 - R Studio
-- R Packages used (tidyverse, here, janitor, readxl, assertr)
+- R Packages used ([tidyverse](https://www.tidyverse.org/), [here](https://here.r-lib.org/), [janitor](https://www.rdocumentation.org/packages/janitor/versions/2.1.0), [readxl](https://readxl.tidyverse.org/), [assertr](https://cran.r-project.org/web/packages/assertr/vignettes/assertr.html))
 
 ### Data Sources
 | Task  | Data Name | link to data|
