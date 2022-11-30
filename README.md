@@ -1,7 +1,7 @@
 # Dirty Data Project :collision:
 
 ### Brief
-Clean datasets which are particularly dirty, and then provide an analysis into the cleaned data, by highlighting key insights the data holds.
+Clean up datasets which are particularly dirty (missing vaues/ invalid date etc.), and then provide an insight to the cleaned data by using R.
 
 ### How to run the project
 Pull the repository and open each task in RStudio, load the analysis file located in the *analysis* folder then run all code chunks. Check project details for extra information on each task.
