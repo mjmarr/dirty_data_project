@@ -1,11 +1,12 @@
-# Task 1 : Decathlon Data :running:
+# Task 4: Halloween Candy Data :ghost: :candy:
+
 ### Files
 
 [analysis](analysis/) - insight to the cleaned data. (.rmd)
 
 [script](scripts/cleaning_script.R) - script that cleans the raw data. (.R)
 
-[task_1.proj]() - project file for RStudio
+[task_4.proj]() - project file for RStudio
 
 ### Raw data preview
 ![](images/raw_preview.png)
@@ -14,3 +15,5 @@
 ### Clean data preview
 ![](images/clean_preview.png)
 [data/clean_data](data/clean_data/) - data after it has been cleaned.
+
+

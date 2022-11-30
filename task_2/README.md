@@ -1,11 +1,13 @@
-# Task 1 : Decathlon Data :running:
+# Task 2: Cake ingredients :cake:
+
 ### Files
 
 [analysis](analysis/) - insight to the cleaned data. (.rmd)
 
 [script](scripts/cleaning_script.R) - script that cleans the raw data. (.R)
 
-[task_1.proj]() - project file for RStudio
+[task_2.proj]() - project file for RStudio
+
 
 ### Raw data preview
 ![](images/raw_preview.png)
