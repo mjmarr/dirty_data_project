@@ -1,4 +1,4 @@
-# Dirty Data Project :hankey:
+# Dirty Data Project :collision:
 
 ### Brief
 Clean datasets which are particularly dirty, and then provide an analysis into the cleaned data, by highlighting key insights the data holds.
