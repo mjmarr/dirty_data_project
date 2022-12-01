@@ -47,9 +47,7 @@ wanplum_pattern <- " PL[0-9]"
 
 #bird data cleaning function
 bird_cleaner <- function(df) {
-  print("cleaning bird data...")
-  
-  df %>%
+  clean_df <- df %>%
     #alter some names of columns
     rename(
       bird_record = record,
@@ -66,38 +64,39 @@ bird_cleaner <- function(df) {
            count) %>%
     
     #remove unwanted strings from 3 different columns
-    clean_bird_data <- bird_relevent_data %>% 
-      #remove unwanted age (ad / adsub etc..)
-      mutate(species = str_remove(species, age_pattern),
-             species_scientific = str_remove(species_scientific, age_pattern),
-             species_abbreviation = str_remove(species_abbreviation, age_pattern),
-             #remove unwanted plumage text
-             species = str_remove(species, plumage_pattern),
-             species_scientific = str_remove(species_scientific, plumage_pattern),
-             species_abbreviation = str_remove(species_scientific, plumage_pattern),
-             #remove wanplum
-             species = str_remove(species, wanplum_pattern),
-             species_scientific = str_remove(species_scientific, wanplum_pattern),
-             species_abbreviation = str_remove(species_abbreviation, wanplum_pattern)
-      )
-    
-    print("....bird data cleaned")
-      
+    #remove unwanted age (ad / adsub etc..)
+    mutate(
+      species = str_remove(species, age_pattern),
+      species_scientific = str_remove(species_scientific, age_pattern),
+      species_abbreviation = str_remove(species_abbreviation, age_pattern),
+      #remove unwanted plumage text
+      species = str_remove(species, plumage_pattern),
+      species_scientific = str_remove(species_scientific, plumage_pattern),
+      species_abbreviation = str_remove(species_scientific, plumage_pattern),
+      #remove wanplum
+      species = str_remove(species, wanplum_pattern),
+      species_scientific = str_remove(species_scientific, wanplum_pattern),
+      species_abbreviation = str_remove(species_abbreviation, wanplum_pattern)
+    )
 }
 
 #clean ship data / pull relevent data for analysis tasks
-ship_cleaner <- function(df){
-  df %>% 
+ship_cleaner <- function(df) {
+  clean_df <- df %>%
     #rename one column
-    rename(ship_record = record) %>% 
-    #grab relevent daa for analysis
+    rename(ship_record = record) %>%
+    #grab relevant data for analysis
     select(ship_record, record_id, lat, long, date)
+  
+  return(clean_df)
 }
 
-#function to merge datasets (bird_df = clean bird data, ship_df = clean ship data)
+#function to merge data-sets (bird_df = clean bird data, ship_df = clean ship data)
 merge_birds_and_ships <- function(bird_df, ship_df) {
   clean_data <- bird_df %>%
-    inner_join(ship_df, by = c("record_id" = "record_id"))
+    inner_join(ship_df, by = "record_id")
+  
+  return(clean_data)
 }
 
 #load data
@@ -126,8 +125,10 @@ ship_data_raw <- read_excel(here("data/raw_data/seabirds.xls"), 1) %>% clean_nam
 #merge_birds_and_ships(clean_bird_data, clean_ship_data)
 
 #clean & join data sets
-merge_birds_and_ships(bird_cleaner(bird_data_raw),ship_cleaner(ship_data_raw))
+merged_clean_data <- merge_birds_and_ships(bird_cleaner(bird_data_raw), ship_cleaner(ship_data_raw))
 
 #save cleaned merged data set ready for analysis
-write_csv("data/clean_data/seabirds_clean.csv")
+write_csv(merged_clean_data ,"data/clean_data/seabirds_clean.csv")
 
+#remove values from environment ready for analysis
+rm(list=ls())
