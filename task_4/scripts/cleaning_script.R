@@ -77,9 +77,9 @@ canada_strings <- c(
   "can[a]*"
 )
 
-us_pattern <- paste0("(?i)", us_strings, collapse = "|")
-uk_pattern <- paste0("(?i)", uk_strings, collapse = "|")
-canada_pattern <- paste0("(?i)", canada_strings, collapse = "|") 
+us_pattern <- str_c("(?i)", us_strings, collapse = "|")
+uk_pattern <- str_c("(?i)", uk_strings, collapse = "|")
+canada_pattern <- str_c("(?i)", canada_strings, collapse = "|") 
 
 #not candy list
 not_candy <- c(
