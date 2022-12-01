@@ -1,0 +1,79 @@
+---
+title: "Task 3"
+output: html_notebook
+---
+
+# Sea bird observation
+
+## import libraries
+```{r}
+library(tidyverse)
+library(here)
+```
+
+
+## load data
+```{r}
+seabirds_data <- read_csv(here("data/clean_data/seabirds_clean.csv"))
+```
+
+
+### Which bird had the most individual sightings?
+```{r}
+seabirds_data %>% 
+  filter(count == 1) %>% 
+  group_by(species) %>% 
+  tally() %>% 
+  slice_min(n)
+
+#check against multipe groups
+seabirds_data %>% 
+  filter(count == 1) %>% 
+  group_by(species, species_scientific, species_abbreviation) %>% 
+  tally() %>%   
+  ungroup() %>% 
+  slice_min(n)
+```
+
+### Which bird had the highest total count?
+```{r}
+seabirds_data %>% 
+  group_by(species, species_scientific, species_abbreviation) %>% 
+  tally() %>%   
+  ungroup() %>% 
+  slice_max(n)
+```
+
+### Which bird had the highest total count above a latitude of -30?
+```{r}
+seabirds_data %>% 
+  filter(lat > -30) %>% 
+  group_by(species, species_scientific, species_abbreviation) %>% 
+  tally() %>%   
+  ungroup() %>% 
+  slice_max(n)
+```
+
+### How many different types of birds were only ever seen in groups of 1?
+```{r}
+#get average for each group
+
+##summarise -> drop_last https://dplyr.tidyverse.org/reference/summarise.html
+
+seabirds_data %>% 
+  group_by(species, species_scientific, species_abbreviation) %>% 
+  summarise(avg_sightings = mean(count, na.rm = TRUE), .groups = 'drop_last') %>% 
+  filter(avg_sightings == 1)
+```
+
+### How many penguins were seen? (Hint: there are many types of penguin)
+```{r}
+seabirds_data %>% 
+  filter(str_detect(species, "penguin"))
+
+seabirds_data %>% 
+  filter(str_detect(species, "penguin")) %>% 
+  count() %>% 
+  pull()
+```
+
