@@ -11,6 +11,7 @@ Pull the repository and open each task in RStudio, load the analysis file locate
 |-----|-----|
 [Task 1](task_1/)|Decathlon Data
 [Task 2](task_2/)|Cake ingredients
+[Task 3](task_3/)|Sea bird observation Data
 [Task 4](task_4/)|Halloween Candy Data
 
 ### Technologies used
@@ -23,4 +24,5 @@ Pull the repository and open each task in RStudio, load the analysis file locate
 |------|-----------|-------------|
 Task 1| Decathalon
 Task 2| Cake Ingredients|https://search.r-project.org/CRAN/refmans/cluster.datasets/html/cake.ingredients.1961.html
+Task 3| Seabirds
 Task 4|Candy|https://www.scq.ubc.ca/so-much-candy-data-seriously/ 
