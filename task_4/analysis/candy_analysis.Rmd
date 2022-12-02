@@ -95,6 +95,8 @@ starburst_despair <- candy_data %>%
   filter(rating == "DESPAIR" & candy == "starburst") %>% 
   count() %>% 
   pull()
+
+starburst_despair
 ```
 
 

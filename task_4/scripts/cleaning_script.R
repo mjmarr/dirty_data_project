@@ -6,7 +6,7 @@ library(readxl)
 library(here)
 
 
-#patterns / candly list
+#patterns / candy list
 #patterns
 us_strings <-
   c(
@@ -77,8 +77,12 @@ canada_strings <- c(
   "can[a]*"
 )
 
+#canada_string <- "(?i)can[a]*"
+
 us_pattern <- str_c("(?i)", us_strings, collapse = "|")
 uk_pattern <- str_c("(?i)", uk_strings, collapse = "|")
+
+#canada can be -> "(?i)can[a]*"
 canada_pattern <- str_c("(?i)", canada_strings, collapse = "|") 
 
 #not candy list
@@ -98,6 +102,7 @@ not_candy <- c(
   "person_of_interest_season_3_dvd_box_set_not_including_disc_4_with_hilarious_outtakes",
   "real_housewives_of_orange_county_season_9_blue_ray",
   "sandwich_sized_bags_filled_with_boo_berry_crunch",
+  "spotted_dick",
   "peterson_brand_sidewalk_chalk",
   "vicodin",
   "white_bread",
@@ -138,7 +143,8 @@ rename_cols <- function(df){
         . == "bonkers_the_candy" ~ "bonkers",
         . == "sourpatch_kids_i_e_abominations_of_nature" ~ "sourpatch_kids",
         . == "sweetums_a_friend_to_diabetes" ~ "sweetums",
-        TRUE ~ .))
+        TRUE ~ .)
+      )
 }
 
 #function to add id column (can use [rowid_to_column("id") instead])
@@ -174,6 +180,7 @@ clean_age <- function(df) {
                                 age <= 100, age, as.numeric(NA)))
 }
 
+#clean gender column
 clean_gender <- function(df) {
   df %>%
     mutate(gender = case_when(
@@ -271,12 +278,12 @@ clean_2017 <- function(df){
 
 #Load excel files
 #import excel data
-raw_data_2015 <- readxl::read_excel(here("data/raw_data/boing-boing-candy-2015.xlsx")) %>% 
-  janitor::clean_names()
-raw_data_2016 <- readxl::read_excel(here("data/raw_data/boing-boing-candy-2016.xlsx")) %>% 
-  janitor::clean_names()
-raw_data_2017 <- readxl::read_excel(here("data/raw_data/boing-boing-candy-2017.xlsx")) %>% 
-  janitor::clean_names()
+raw_data_2015 <- read_excel(here("data/raw_data/boing-boing-candy-2015.xlsx")) %>% 
+  clean_names()
+raw_data_2016 <- read_excel(here("data/raw_data/boing-boing-candy-2016.xlsx")) %>% 
+  clean_names()
+raw_data_2017 <- read_excel(here("data/raw_data/boing-boing-candy-2017.xlsx")) %>% 
+  clean_names()
 
 
 #clean 2015 / 2016 / 2017 raw
